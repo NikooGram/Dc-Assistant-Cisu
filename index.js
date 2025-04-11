@@ -153,6 +153,24 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
+// !clean
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+  if (message.content === '!clean') {
+    // Verifica si tiene el rol Staff
+    const staffRoleId = '1359947447656255639'; // ID del rol Staff
+    if (!message.member.roles.cache.has(staffRoleId)) {
+      return message.reply('❌ No tienes permisos para usar este comando.');
+    }
 
+    try {
+      await message.channel.bulkDelete(100, true);
+      await message.channel.send('🧹 Canal limpiado.');
+    } catch (err) {
+      console.error('Error al limpiar mensajes:', err);
+      message.channel.send('❌ Hubo un error al intentar limpiar el canal.');
+    }
+  }
+});
 
 client.login(process.env.TOKEN);
