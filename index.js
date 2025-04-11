@@ -45,6 +45,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   // Si el usuario presiona el botón de abrir ticket
   if (interaction.customId === 'create_ticket') {
+    
+        // Verificar si el usuario ya tiene un ticket abierto
+    const existing = interaction.guild.channels.cache.find(c =>
+      c.name === `ticket-${interaction.user.username.toLowerCase()}`
+    );
+
+    if (existing) {
+      return interaction.reply({
+        content: `❗ Ya tienes un ticket abierto: <#${existing.id}>`,
+        ephemeral: true
+      });
+    }
+
     // Comienza el proceso para crear el ticket
     try {
       const ticketChannel = await interaction.guild.channels.create({
