@@ -13,15 +13,18 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.GuildMember]
 });
 
-// Canal donde el mensaje con el botón será enviado
-//const supportChannelId = '1359948359359529083'; // Reemplaza con tu ID de canal de soporte
 
+ ////////// Apenas se enciende //////////
 client.once('ready', () => {
   console.log(`✅ Bot listo como ${client.user.tag}`);
   sendTicketMessage(); // Enviar mensaje estático con botón
 });
 
+                                //// Apertura Sistema de tikcets ////
+
+  // Mensaje estatico //
 async function sendTicketMessage() {
+  // ID del canal donde se enviara el mensaje estatico
   const supportChannelId = '1359948359359529083';
   // Canal donde se enviará el mensaje estático
   const channel = await client.channels.fetch(supportChannelId);
@@ -36,11 +39,12 @@ async function sendTicketMessage() {
   const row = new ActionRowBuilder().addComponents(ticketButton);
 
   channel.send({
-    content: '¡Hola! Si necesitas ayuda, puedes abrir un ticket haciendo clic en el botón de abajo.',
+    content: '¡Hola! Si necesitas ayuda, puedes abrir un ticket haciendo clic en el botón de abajo.-',
     components: [row]
   });
 }
 
+  // Apertura del ticket //
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isButton()) return;
 
@@ -48,19 +52,20 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.customId === 'create_ticket') {
     
         // Verificar si el usuario ya tiene un ticket abierto
-    const existing = interaction.guild.channels.cache.find(c =>
-      c.name === `ticket-${interaction.user.username.toLowerCase()}`
-    );
-
-    if (existing) {
-      return interaction.reply({
-        content: `❗ Ya tienes un ticket abierto: <#${existing.id}>`,
-        flags: 64  // Flag para mensaje efímero
-      });
-    }
-
-    // Comienza el proceso para crear el ticket
+        const existing = interaction.guild.channels.cache.find(c =>
+          c.name === `ticket-${interaction.user.username.toLowerCase()}`
+        );
+    
+        if (existing) {
+          return interaction.reply({
+            content: `❗ Ya tienes un ticket abierto: <#${existing.id}>`,
+            ephemeral: true
+          });
+        }
+    
+     ////////// Creacion del ticket //////////
     try {
+      
       const ticketChannel = await interaction.guild.channels.create({
         name: `ticket-${interaction.user.username}`,
         type: ChannelType.GuildText,
@@ -79,8 +84,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages], // El rol Staff puede ver el canal
           },
           {
-            id: client.user.id, // VIEW BOT
-            allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels],
+            id: client.user.id, // El bot 
+            allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels], // El bot puede ver el ticket
           }
         ],
       });
@@ -102,7 +107,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       // Enviar un mensaje al canal original (donde presionaron el botón)
       await interaction.reply({
         content: `Tu ticket ha sido creado: <#${ticketChannel.id}>`,
-        flags: 64  // Flag para mensaje efímero
+        ephemeral: true
       });
 
       // Eliminar el mensaje con el botón original después de que el ticket se haya creado
@@ -111,12 +116,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
       console.error('Error al crear el ticket:', error);
       await interaction.reply({
         content: '❌ Ocurrió un error al crear el ticket. Intenta de nuevo más tarde.',
-        flags: 64  // Flag para mensaje efímero
+        ephemeral: true
       });
     }
   }
 });
 
+  // Close tickets and Transcript //
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isButton()) return;
 
@@ -167,8 +173,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-// !clean
-client.on('messageCreate', async (message) => {
+                                //// Finalizacion Sistema Tickets ////
+
+
+                                //// Comandos con palabras clave ////
+client.on('messageCreate', async (message) => { // Comando !clean limpia el chat entero
   if (message.author.bot) return;
   if (message.content === '!clean') {
     // Verifica si tiene el rol Staff
