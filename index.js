@@ -1,7 +1,8 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Partials, ChannelType, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, ChannelType, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { setDefaultHighWaterMark } = require('stream');
 
 const client = new Client({
   intents: [
@@ -14,14 +15,13 @@ const client = new Client({
 });
 
 
- ////////// Apenas se enciende //////////
+ ////////// APENAS SE EJECUTA //////////
 client.once('ready', () => {
   console.log(`✅ Bot listo como ${client.user.tag}`);
   sendTicketMessage(); // Enviar mensaje estático con botón
 });
 
-                                //// Apertura Sistema de tikcets ////
-
+                                //// APERTURA SISTEMA DE TICKETS ////
   // Mensaje estatico //
 async function sendTicketMessage() {
   // ID del canal donde se enviara el mensaje estatico
@@ -172,16 +172,36 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }, 5000);
   }
 });
+                                //// FINALIZACION SISTEMA DE TICKETS ////
 
-                                //// Finalizacion Sistema Tickets ////
 
-                                //// Apertura Sistema Bienvenidas ////
-                                //// Finalizacion Sistema de Bienvenidas ////
+                                //// APERTURA SISTEMA DE BIENVENIDAS ////
+client.on('guildMemberAdd', async member => {
+  const welcome_channel_id = '1360631057992388669'; // ID canal bienvenidas
+  const channel = member.guild.channels.cache.get(welcome_channel_id);
+  if (!channel) return;
 
-                                //// Apertura Sistema Sorteos ////
-                                //// Finalizacion Sistema Sorteos ////
+  // Forzar actualizacion del contador de users
+  const updateGuild = await member.guild.fetch();
+  //crear embed
+  const embed = new EmbedBuilder()
+    .setColor('#00FFCC') // Color editable
+    .setTitle(`¡Bienvenidx al sevidor!`)
+    .setDescription(`Hola <@${member.id}>, estamos felices de tenerne en **${member.guild.name}**. \n¡Disfruta tu instacia aqui!`)
+    .setThumbnail(member.user.displayAvatarURL({ dynamic: true })) // Foto del user
+    .setTimestamp()
+    .setFooter({ text: `Miembro numero ${updateGuild.memberCount}`});
 
-                                //// Comandos con palabras clave ////
+  // enviar el embed
+  channel.send({embeds: [embed] }).catch(console.error);
+});
+                                //// FINALIZACION SISTEMA DE BIENVENIDAS ////
+
+
+                                //// APERTURA SISTEMA DE SORTEOS ////
+                                //// FINALIZACION SITEMA DE SORTEOS ////
+
+                                //// COMANDOS CON PALABRAS CLAVE ////
 client.on('messageCreate', async (message) => { // Comando !clean limpia el chat entero
   if (message.author.bot) return;
   if (message.content === '!clean') {
