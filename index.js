@@ -14,7 +14,7 @@ const client = new Client({
 });
 
 // Canal donde el mensaje con el botón será enviado
-const supportChannelId = '1359948359359529083'; // Reemplaza con tu ID de canal de soporte
+//const supportChannelId = '1359948359359529083'; // Reemplaza con tu ID de canal de soporte
 
 client.once('ready', () => {
   console.log(`✅ Bot listo como ${client.user.tag}`);
@@ -22,6 +22,7 @@ client.once('ready', () => {
 });
 
 async function sendTicketMessage() {
+  const supportChannelId = '1359948359359529083';
   // Canal donde se enviará el mensaje estático
   const channel = await client.channels.fetch(supportChannelId);
 
