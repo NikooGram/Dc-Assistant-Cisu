@@ -39,7 +39,7 @@ async function sendTicketMessage() {
   const row = new ActionRowBuilder().addComponents(ticketButton);
 
   channel.send({
-    content: '¡Hola! Si necesitas ayuda, puedes abrir un ticket haciendo clic en el botón de abajo.-',
+    content: '¡Hola! Si necesitas ayuda, puedes abrir un ticket haciendo clic en el botón de abajo.',
     components: [row]
   });
 }
@@ -59,7 +59,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         if (existing) {
           return interaction.reply({
             content: `❗ Ya tienes un ticket abierto: <#${existing.id}>`,
-            ephemeral: true
+            flags: 64 // Flag para mensaje efimero
           });
         }
     
@@ -84,7 +84,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
             allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages], // El rol Staff puede ver el canal
           },
           {
-            id: client.user.id, // El bot 
+            id: client.user.id, // ID App
             allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageChannels], // El bot puede ver el ticket
           }
         ],
@@ -107,7 +107,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       // Enviar un mensaje al canal original (donde presionaron el botón)
       await interaction.reply({
         content: `Tu ticket ha sido creado: <#${ticketChannel.id}>`,
-        ephemeral: true
+        flags: 64 // Flag para mensaje efimero
       });
 
       // Eliminar el mensaje con el botón original después de que el ticket se haya creado
@@ -116,7 +116,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       console.error('Error al crear el ticket:', error);
       await interaction.reply({
         content: '❌ Ocurrió un error al crear el ticket. Intenta de nuevo más tarde.',
-        ephemeral: true
+        flags: 64 // Flag para mensaje efimero
       });
     }
   }
@@ -175,6 +175,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
                                 //// Finalizacion Sistema Tickets ////
 
+                                //// Apertura Sistema Bienvenidas ////
+                                //// Finalizacion Sistema de Bienvenidas ////
+
+                                //// Apertura Sistema Sorteos ////
+                                //// Finalizacion Sistema Sorteos ////
 
                                 //// Comandos con palabras clave ////
 client.on('messageCreate', async (message) => { // Comando !clean limpia el chat entero
