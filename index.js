@@ -14,6 +14,7 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.GuildMember]
 });
 
+const prefix = '!';
 
  ////////// APENAS SE EJECUTA //////////
 client.once('ready', () => {
