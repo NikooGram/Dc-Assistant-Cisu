@@ -1,0 +1,11 @@
+[2025-04-13T17:56:01.352Z] Error: Test error
+    at Object.<anonymous> (C:\Users\nfand\Documents\Discord Bot\bot-ticket\index.js:23:7)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49
+[2025-04-13T17:57:00.939Z] Test unhandled rejection
