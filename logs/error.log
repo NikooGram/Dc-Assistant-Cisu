@@ -9,3 +9,11 @@
     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
     at node:internal/main/run_main_module:36:49
 [2025-04-13T17:57:00.939Z] Test unhandled rejection
+[2025-04-13T18:34:23.618Z] DiscordAPIError[40060]: Interaction has already been acknowledged.
+    at handleErrors (C:\Users\nfand\Documents\Discord Bot\bot-ticket\node_modules\@discordjs\rest\dist\index.js:727:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async BurstHandler.runRequest (C:\Users\nfand\Documents\Discord Bot\bot-ticket\node_modules\@discordjs\rest\dist\index.js:831:23)
+    at async _REST.request (C:\Users\nfand\Documents\Discord Bot\bot-ticket\node_modules\@discordjs\rest\dist\index.js:1272:22)
+    at async ButtonInteraction.reply (C:\Users\nfand\Documents\Discord Bot\bot-ticket\node_modules\discord.js\src\structures\interfaces\InteractionResponses.js:194:22)
+    at async handleTicketInteraction (C:\Users\nfand\Documents\Discord Bot\bot-ticket\systems\tickets.js:90:9)
+    at async Object.execute (C:\Users\nfand\Documents\Discord Bot\bot-ticket\events\interactionCreate.js:7:9)

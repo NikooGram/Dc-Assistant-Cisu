@@ -7,6 +7,7 @@ module.exports = {
         support: process.env.SUPPORT_CHANNEL_ID, // Canal de soporte para tickets
         welcome: process.env.WELCOME_CHANNEL_ID, // Canal de bienvenidas
         transcriptLog: process.env.TRANSCRIPT_LOG_CHANNEL_ID || 'registro', // Canal para transcripciones
+        sorteoLog: process.env.SORTEO_LOG_CHANNEL_ID,
     },
     roles: {
         staff: process.env.STAFF_ROLE_ID, // Rol de Staff
