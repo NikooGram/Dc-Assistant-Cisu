@@ -1,5 +1,5 @@
+const getRandomColor = require('../utils/getRandomColor');
 const { EmbedBuilder } = require("discord.js");
-
 
 module.exports = {
     name: 'help', // Nombre del comando
@@ -7,7 +7,7 @@ module.exports = {
     async execute(message) {
 
         const helpEmbed = new EmbedBuilder()
-        .setColor('#e14524') // Color
+        .setColor(`#${getRandomColor()}`) // Color
         .setTitle(`!Aqui estan mis comandos¡`)
         .setDescription(`\n!help ***Para ver esta guia!***\n!sorteo ***Para iniciar un nuevo sorteo!***\n!clean ***Para limpiar los ultimos 100 msg del canal***\n\nAdicional trae un sistema de ticket y sistema de bienvenidas. `)
         .setTimestamp()

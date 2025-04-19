@@ -1,8 +1,9 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const getRandomColor = require('../utils/getRandomColor');
 const config = require('../config'); // Importar configuraciones
 
 module.exports = {
-    name: 'sorteo',
+    name: 'sorteo', // Nombre del comando
     description: 'Inicia un sorteo con un premio, duración, número de ganadores y mensaje opcional.',
     async execute(message, args) {
         const staffRoleId = config.roles.staff;
@@ -52,10 +53,11 @@ module.exports = {
             .setTitle('🎉 Confirmación del sorteo')
             .setDescription(`**Premio:** ${premio}\n**Duración:** ${duracion}\n**Ganadores:** ${numGanadores}\n**Mensaje:** ${mensajePersonalizado || 'Ninguno'}\n\n✅ ¿Quieres iniciar el sorteo?`)
             .setColor('#00FF00');
+            
 
         const confirmButtons = new ActionRowBuilder().addComponents(
             new ButtonBuilder().setCustomId('confirm_sorteo').setLabel('✅ Confirmar').setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId('cancel_sorteo').setLabel('❌ Cancelar').setStyle(ButtonStyle.Danger)
+            new ButtonBuilder().setCustomId('cancel_sorteo').setLabel('❌ Cancelar').setStyle(ButtonStyle.Danger),
         );
 
         const confirmMessage = await message.channel.send({ embeds: [confirmEmbed], components: [confirmButtons] });
@@ -69,6 +71,7 @@ module.exports = {
                 await interaction.update({ content: '🎉 ¡Sorteo iniciado!', embeds: [], components: [] });
 
                 const embed = new EmbedBuilder()
+                    .setColor(`#${getRandomColor()}`) // Color aleatorio
                     .setTitle('🎉 ¡SORTEO!')
                     .setDescription(`**Premio:** ${premio}\n\nReacciona con 🎉 para participar.\n\n⏳ **Duración:** ${duracion}\n👥 **Ganadores:** ${numGanadores}\n**Mensaje:** ${mensajePersonalizado || 'Ninguno'}`)
                     .setColor('#00FF00')
@@ -100,6 +103,7 @@ module.exports = {
 
                     // Anunciar a los ganadores
                     const embedGanador = new EmbedBuilder()
+                        .setColor(`#${getRandomColor()}`) // Color aleatorio
                         .setTitle('🎉 ¡SORTEO FINALIZADO!')
                         .setDescription(`Los ganadores del sorteo de **${premio}** son:\n${ganadores.map(g => `🎊 **${g.tag}**`).join('\n')}`)
                         .setColor('#FFD700')
@@ -117,6 +121,7 @@ module.exports = {
                     const logChannel = message.guild.channels.cache.get(logChannelId);
                     if (logChannel) {
                         const logEmbed = new EmbedBuilder()
+                            .setColor(`#${getRandomColor()}`) // Color aleatorio
                             .setTitle('📜 Registro de sorteo')
                             .setDescription(`**Premio:** ${premio}\n**Duración:** ${duracion}\n**Participantes:** ${participantes.size}\n**Ganadores:**\n${ganadores.map(g => `🎊 **${g.tag}**`).join('\n')}\n**Mensaje:** ${mensajePersonalizado || 'Ninguno'}`)
                             .setColor('#ADD8E6')

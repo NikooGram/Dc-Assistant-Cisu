@@ -1,9 +1,14 @@
+const getRandomColor = require('../utils/getRandomColor');
+const config = require(`../config`);
+
 module.exports = {
     name: 'clean', // Nombre del comando
     description: 'Limpia el canal actual.', 
     async execute(message) {
-        const staffRoleId = process.env.STAFF_ROLE_ID; // ID del rol Staff puesto en .env
+        const staffRoleId = config.roles.staff; // Sacar id del rol Staff desde el config
         if (!message.member.roles.cache.has(staffRoleId)) {
+
+            
             return message.reply('❌ No tienes permisos para usar este comando.');
         }
 
