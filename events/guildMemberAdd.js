@@ -1,8 +1,9 @@
-const { handleWelcome} = require('../systems/welcome');
+const { handleWelcome } = require('../systems/welcome');
 
 module.exports = {
-    name: 'guilMemberAdd',
-    async execute(member) {
+    name: 'guildMemberAdd',
+    async execute(member, client) {
+        console.log(`Nuevo miembro detectado: ${member.user.tag}`);
         await handleWelcome(member);
-    }
-}
+    },
+};
