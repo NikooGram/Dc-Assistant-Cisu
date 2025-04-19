@@ -1,6 +1,7 @@
-const { ChannelType, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { ChannelType, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const getRandomColor = require('../utils/getRandomColor');
 const config = require('../config');
 
 // Enviar mensaje estático con botón de ticket
@@ -12,25 +13,39 @@ async function sendTicketMessage(client) {
         .setLabel('Abrir Ticket')
         .setStyle(ButtonStyle.Primary);
 
-    const row = new ActionRowBuilder().addComponents(ticketButton);
+    const aperturaButton = new ActionRowBuilder().addComponents(ticketButton);
+
+    const aperturaEmbed = new EmbedBuilder()
+        .setColor(`#${getRandomColor()}`)
+        .setTitle('🎟️ Sistema de Tickets')
+        .setDescription('Si necesitas ayuda, haz clic en el botón de abajo para abrir un ticket. Un miembro del staff te atenderá lo antes posible.')
+        .setFooter({ text: '¡Estamos aquí para ayudarte!' })
+        .setTimestamp();
 
     channel.send({
-        content: '¡Hola! Si necesitas ayuda, puedes abrir un ticket haciendo clic en el botón de abajo.',
-        components: [row],
+        embeds: [aperturaEmbed],
+        components: [aperturaButton],
     });
 }
 
 // Gestión de interacciones relacionadas con tickets
 async function handleTicketInteraction(interaction, client) {
     if (interaction.customId === 'create_ticket') {
+        await interaction.deferReply({ ephemeral: true }); // Defer la interacción para evitar que expire
+
         const existing = interaction.guild.channels.cache.find(c =>
             c.name === `ticket-${interaction.user.username.toLowerCase()}`
         );
 
         if (existing) {
-            return interaction.reply({
-                content: `❗ Ya tienes un ticket abierto: <#${existing.id}>`,
-                ephemeral: true,
+            const ExistenteEmbed = new EmbedBuilder()
+                .setColor(`#${getRandomColor()}`)
+                .setTitle('🎟️ Ticket ya existente')
+                .setDescription(`Ya tienes un ticket abierto: <#${existing.id}>`)
+                .setFooter({ text: '¡Estamos aquí para ayudarte!' })
+                .setTimestamp();
+            return interaction.editReply({
+                embeds: [ExistenteEmbed],
             });
         }
 
@@ -63,32 +78,66 @@ async function handleTicketInteraction(interaction, client) {
                 ],
             });
 
+            const staffRoleId = config.roles.staff;
+            const asistenteRoleId = config.roles.asistente; // ID del rol de asistente
+
+            const staff = staffRoleId ? `<@&${staffRoleId}>` : '@Staff';
+            const asistente = asistenteRoleId ? `<@&${asistenteRoleId}>` : '@AsistenteTickets';
+
             const closeButton = new ButtonBuilder()
                 .setCustomId('close_ticket')
                 .setLabel('🔒 Cerrar ticket')
                 .setStyle(ButtonStyle.Danger);
 
-            const row = new ActionRowBuilder().addComponents(closeButton);
+            const botonCerrado = new ActionRowBuilder().addComponents(closeButton);
+
+            const ticketEmbed = new EmbedBuilder()
+                .setColor(`#${getRandomColor()}`)
+                .setTitle('🎟️ Ticket Abierto')
+                .setDescription(`Hola ${interaction.user.username}, este es tu ticket. Un miembro del staff te ayudará pronto.`)
+                .setFooter({ text: '¡Estamos aquí para ayudarte!' })
+                .setTimestamp();
 
             await ticketChannel.send({
-                content: `🎟️ ¡Hola ${interaction.user.username}, tu ticket ha sido creado! Un miembro del staff te ayudará pronto.`,
-                components: [row],
+                content: `${staff}, ${asistente}`, // Menciona los roles
+                embeds: [ticketEmbed],
+                components: [botonCerrado],
             });
 
-            await interaction.reply({
-                content: `Tu ticket ha sido creado: <#${ticketChannel.id}>`,
-                ephemeral: true,
+            const respuestaEmbed = new EmbedBuilder()
+                .setColor(`#${getRandomColor()}`)
+                .setTitle('🎟️ Ticket Creado')
+                .setDescription(`Tu ticket ha sido creado: <#${ticketChannel.id}>`)
+                .setFooter({ text: '¡Estamos aquí para ayudarte!' })
+                .setTimestamp();
+
+            await interaction.editReply({
+                embeds: [respuestaEmbed],
             });
         } catch (error) {
             console.error('Error al crear el ticket:', error);
-            await interaction.reply({
-                content: '❌ Ocurrió un error al crear el ticket. Intenta de nuevo más tarde.',
-                ephemeral: true,
+
+            const ErrorEmbed = new EmbedBuilder()
+                .setColor(`#${getRandomColor()}`)
+                .setTitle('❌ Error al crear el ticket')
+                .setDescription('Hubo un error al intentar crear tu ticket. Por favor, inténtalo de nuevo más tarde.')
+                .setFooter({ text: '¡Estamos aquí para ayudarte!' })
+                .setTimestamp();
+
+            await interaction.editReply({
+                embeds: [ErrorEmbed],
             });
         }
     } else if (interaction.customId === 'close_ticket') {
+        const cerradoEmbed = new EmbedBuilder()
+            .setColor(`#${getRandomColor()}`)
+            .setTitle('🔒 Ticket Cerrado')
+            .setDescription('Este ticket ha sido cerrado. Si necesitas más ayuda, abre un nuevo ticket.')
+            .setFooter({ text: '¡Estamos aquí para ayudarte!' })
+            .setTimestamp();
+
         await interaction.reply({
-            content: '🔒 Cerrando ticket...',
+            embeds: [cerradoEmbed],
             ephemeral: true,
         });
 
@@ -110,10 +159,16 @@ async function handleTicketInteraction(interaction, client) {
         const registroChannel = interaction.guild.channels.cache.find(c =>
             c.name === config.channels.transcriptLog && c.type === ChannelType.GuildText
         );
-        if(registroChannel) {
+        if (registroChannel) {
             try {
+                const transcriptEmbed = new EmbedBuilder()
+                    .setColor(`#${getRandomColor()}`)
+                    .setTitle('📜 Transcript del Ticket')
+                    .setDescription(`El ticket <#${channel.id}> ha sido cerrado.`)
+                    .setFooter({ text: 'Transcript hecho por Cisu!' })
+                    .setTimestamp();
                 await registroChannel.send({
-                    content: `📜 Transcript del ticket <#${channel.name}>:`,
+                    embeds: [transcriptEmbed],
                     files: [filePath],
                 });
                 console.log('Archivo enviado al canal de registro');

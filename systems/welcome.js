@@ -1,22 +1,27 @@
 const { EmbedBuilder } = require('discord.js');
+const getRandomColor = require('../utils/getRandomColor');
 const config = require('../config');
 
-// Evento de bienvenida
 async function handleWelcome(member) {
-    const channel = member.guild.channels.cache.get(config.channels.welcome);
-    if (!channel) return;
+    const welcomeChannelId = config.channels.welcome; // ID del canal de bienvenida
+    const channel = member.guild.channels.cache.get(welcomeChannelId); // Obtener el objeto del canal
 
-    // Actualizar contador de users
+    if (!channel) {
+        console.error('No se encontró el canal de bienvenida.');
+        return;
+    }
+
+    // Actualizar contador de usuarios
     const updateGuild = await member.guild.fetch();
 
-    // Crear embet 
+    // Crear embed
     const embed = new EmbedBuilder()
-        .setColor('#00FFCC') // Color
+        .setColor(`#${getRandomColor()}`) // Color
         .setTitle(`¡Bienvenidx al servidor!`)
-        .setDescription(`Hola <@${member.id}>, estamos felices de tenerte en **${member.guild.name}**. ¡Disfruta tu estancia aquí!`)
-        .setThumbnail(member.user.displayAvatarURL({ dynamic: true })) // Foto del user
+        .setDescription(`Hola <@${member.id}>, estamos felices de tenerte en **${member.guild.name}**, eres el miembro número ${updateGuild.memberCount}.\n¡Disfruta tu estancia aquí!\n**Recuerda leer las reglas y presentarte!**`)
+        .setThumbnail(member.user.displayAvatarURL({ dynamic: true })) // Foto del usuario
         .setTimestamp()
-        .setFooter({ text: `Miembro número ${updateGuild.memberCount}` });
+        .setFooter({ text: `Miembro de Test!` });
 
     // Enviar el mensaje
     channel.send({ embeds: [embed] }).catch(console.error);
